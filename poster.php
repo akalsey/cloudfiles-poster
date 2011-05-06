@@ -33,11 +33,12 @@ $api_key = $_SERVER['PHP_AUTH_PW'];
 // If there's a ?name= query variable, use that as the file name
 $filename = empty($_GET['name']) ? $_FILES['filename']['name'] : $_GET['name'];
 
+// Authenticate with CloudFiles and create our file and container objects
 $auth = new CF_Authentication($username, $api_key);
 $auth->authenticate();
 $conn = new CF_Connection($auth);
-$recordings = $conn->create_container($container_name);
-$file = $recordings->create_object($filename);
+$container = $conn->create_container($container_name);
+$file = $container->create_object($filename);
 
 // Set the content-type
 if (class_exists('finfo')) {
@@ -54,9 +55,8 @@ if (class_exists('finfo')) {
 $size = (float) sprintf("%u", filesize($_FILES['filename']['tmp_name']));
 $fp = fopen($_FILES['filename']['tmp_name'], "r");
 $file->write($fp, $size);
+$uri = $container->make_public();
 
-
-$uri = $recordings->make_public();
 $log->LogInfo('Published ' . $_FILES['filename']['name'] . ' to ' . $file->public_uri());
 
 header('HTTP/1.1 202 Created');
