@@ -57,7 +57,7 @@ $fp = fopen($_FILES['filename']['tmp_name'], "r");
 $file->write($fp, $size);
 $uri = $container->make_public();
 
-$log->LogInfo('Published ' . $_FILES['filename']['name'] . ' to ' . $file->public_uri());
+$log->LogInfo('Published ' . $_FILES['filename']['name'] . ' to container $container_name at ' . $file->public_uri());
 
 header('HTTP/1.1 202 Created');
 header('Location: ' . $file->public_uri());
